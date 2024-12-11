@@ -18,6 +18,17 @@ def check_model(opt):
         model = VGG(num_classes=opt.num_classes)
 
         return model
-
+    elif opt.model.startswith('alexnet'):
+ 
+    	alexnet = resnet_ilsvrc.__dict__[opt.model]		
+    	model=alexnet(num_classes = opt.num_classes)
+    	
+    	return model
+    elif opt.model.startswith('vg16'):
+ 
+    	vg16 = resnet_ilsvrc.__dict__[opt.model]		
+    	model=vg16(num_classes = opt.num_classes)
+    	
+    	return model
     else:
         raise Exception('Unknown model')

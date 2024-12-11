@@ -11,10 +11,12 @@ from check_dataset import check_dataset
 from check_model import check_model
 from utils.utils import AverageMeter, accuracy, set_logging_config
 from train.meta_optimizers import MetaSGD
-
+import matplotlib.pyplot as plt
 torch.backends.cudnn.benchmark = True
-
-
+y_acc_train=[]
+y_acc_val=[]
+x_epoch=[]
+'''
 def _get_num_features(model):
     if model.startswith('resnet'):
         n = int(model[6:])
@@ -31,7 +33,30 @@ def _get_num_features(model):
             return [64, 128, 256, 512, 512]
 
     raise NotImplementedError
-
+'''
+def _get_num_features(model):
+    if model.startswith('resnet'):
+        n = int(model[6:])
+        if n in [18, 34]:
+            return [64, 64, 128, 256, 512]
+        elif n in [50,101,152]:
+            return [64, 256, 512, 1024, 2048]
+        else:
+            n = (n-2) // 6
+            return [16]*n+[32]*n+[64]*n
+    elif model.startswith('vgg'):
+        n = int(model[3:].split('_')[0])
+        if n == 9:
+            return [64, 128, 256, 512, 512]
+        elif n == 11:
+            return [64, 128, 256, 512, 512]
+    elif model.startswith('alexnet'):
+    	return [64,192, 384,256, 256]
+    elif model.startswith('vg16'):
+    	return [64,128,256,512,512]
+        
+        	
+    raise NotImplementedError
 
 class FeatureMatching(nn.ModuleList):
     def __init__(self, source_model, target_model, pairs):
@@ -326,6 +351,17 @@ def main():
 
         logger.info('[Epoch {}] [val {:.4f}] [test {:.4f}] [best {:.4f}]'.format(epoch, acc[0], acc[1], state['best'][1]))
 
+	y_acc_train.append(acc[0])
+        y_acc_val.append(acc[1])
+        x_epoch.append(epoch)
+        	#---------------draw learning curve---------------------	
+        plt.plot(x_epoch,y_acc_train,color='b',label='train')
+        plt.plot(x_epoch,y_acc_val,color='r',label='val')
+        plt.title('model acc')
+        plt.ylabel('accuracy')
+        plt.xlabel('epoch')
+        
+        plt.savefig(opt.experiment+'model acc.png')
 
 if __name__ == '__main__':
     main()

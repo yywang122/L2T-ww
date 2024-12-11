@@ -79,7 +79,15 @@ def check_dataset(opt):
                                                 transforms.RandomCrop(32),
                                                 transforms.RandomHorizontalFlip()])
 
-    splits = check_split(opt)
+    train_transform = transforms.Compose([train_large_transform, normalize_transform])
+    val_transform = transforms.Compose([val_large_transform, normalize_transform])
+    train, val = 'train', 'val'
+    sets = [dset.ImageFolder(root=os.path.join(opt.dataroot, train), transform=train_transform),
+                dset.ImageFolder(root=os.path.join(opt.dataroot, train), transform=val_transform),
+                dset.ImageFolder(root=os.path.join(opt.dataroot, val), transform=val_transform)]
+    
+    opt.num_classes = 9
+    '''splits = check_split(opt)
 
     if opt.dataset in ['cub200', 'indoor', 'stanford40', 'dog']:
         train, val = 'train', 'test'
@@ -116,7 +124,7 @@ def check_dataset(opt):
         opt.num_classes = len(splits[0][0])
 
     else:
-        raise Exception('Unknown dataset')
+        raise Exception('Unknown dataset')'''
 
     loaders = [torch.utils.data.DataLoader(dataset,
                                            batch_size=opt.batchSize,
