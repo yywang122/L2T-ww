@@ -3,8 +3,9 @@ Some code details https://docs.google.com/presentation/d/1rHtjzEovxttFpTZBJ3249g
 
 ## Train custom data 
 bird3 ( all to all )
+```
 python train_l2t_ww.py --dataroot ./data/bird3 --experiment ./logs_new/bird3_34to18_16_0.001 --source-model resnet34 --target-model resnet18 --batchSize 16 --lr 0.001
-
+```
 # Learning What and Where to Transfer (ICML 2019)
 Learning What and Where to Transfer (ICML 2019)
 https://arxiv.org/abs/1905.05901
